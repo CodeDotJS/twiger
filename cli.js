@@ -64,6 +64,7 @@ const coverArg = argv.c;
 
 const profileMedia = `https://twitter.com/${profileArg}`;
 const coverMedia = `https://twitter.com/${coverArg}`;
+
 const gifMedia = argv.g;
 
 const messageDisplay = colors.green.bold(savedMedia.replace('./', '').replace('/', ''));
