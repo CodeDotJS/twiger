@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img src="media/1.png" width="500">
+	<img src="https://raw.githubusercontent.com/CodeDotJS/twiger/master/media/1.png" width="500">
 	<br>
 	<img src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
 </h1>
