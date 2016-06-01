@@ -1,10 +1,10 @@
 <h1 align="center">
 	<img src="media/1.png" width="500">
+	<br>
+	<ig src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
 </h1>
 
 > A complete media downloader for Twitter :bird:
-
-[![Build Status](https://travis-ci.org/CodeDotJS/whatiz-cli.svg?branch=master)](https://travis-ci.org/CodeDotJS/twiger)
 
 ## Install
 
@@ -54,7 +54,7 @@ Missing required argument: n
 
 ## Note
 
-> Don't give any extension while writing file's name__
+> Don't give any extension while writing file's name
 
 __Example :__
 
@@ -64,7 +64,7 @@ __Example :__
  $ twiger -u Rishi_Giri_ -n rishi.jpg ( ✖ ) 
 ```
 
-__INFO :__ GIFS on twitter are always in .mp4 format.
+> Available gifs on twitter are changed into mp4 format.
 
 ## Related
 
