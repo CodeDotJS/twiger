@@ -22,6 +22,10 @@ const argv = require('yargs')
 	.example(colors.cyan.bold('\n$0 -u tjholowaychuk -n tj'))
 	.argv;
 
+const updateNotifier = require('update-notifier');
+const pkg = require('./package.json');
+updateNotifier({pkg}).notify();
+
 const savedMedia = 'Twitter/';
 
 dns.lookup('twitter.com', err => {
