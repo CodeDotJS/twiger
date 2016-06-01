@@ -3,11 +3,11 @@
 'use strict';
 
 const dns = require('dns');
+const fs = require('fs');
+const https = require('https');
 const mkdirp = require('mkdirp');
 const got = require('got');
 const cheerio = require('cheerio');
-const fs = require('fs');
-const https = require('https');
 const colors = require('colors/safe');
 
 const arrow = colors.cyan.bold('❱');
