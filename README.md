@@ -4,7 +4,7 @@
 	<img src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
 </h1>
 
-> :bird:A complete media downloader for Twitter
+> :bird: A complete media downloader for Twitter
 
 ## Install
 
