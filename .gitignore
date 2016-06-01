@@ -26,6 +26,12 @@ build/Release
 # Dependency directory
 node_modules
 
+# files
+Twitter
+
+# extra
+nm
+
 # Optional npm cache directory
 .npm
 
