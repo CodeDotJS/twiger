@@ -19,7 +19,7 @@ const argv = require('yargs')
 	.command('g', ` ${arrow} full link        - download gifs                   `)
 	.demand(['n'])
 	.describe('n', `${arrow}  save images as`)
-	.example(colors.cyan.bold('\n$0 -u tjholowaychuk -n tj'))
+	.example(colors.yellow.bold('\n$0 -u tjholowaychuk -n tj'))
 	.argv;
 
 const updateNotifier = require('update-notifier');
