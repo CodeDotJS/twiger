@@ -54,7 +54,7 @@ Missing required argument: n
 
 ## Note
 
-> Don't give any extension while writing file's name.
+> Don't give any extension while writing file's name__
 
 __Example :__
 
@@ -63,6 +63,8 @@ __Example :__
 
  $ twiger -u Rishi_Giri_ -n rishi.jpg ( ✖ ) 
 ```
+
+__INFO :__ GIFS on twitter are always in .mp4 format.
 
 ## Related
 
