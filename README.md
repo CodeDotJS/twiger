@@ -1,7 +1,7 @@
 <h1 align="center">
 	<img src="media/1.png" width="500">
 	<br>
-	<ig src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
+	<img src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
 </h1>
 
 > A complete media downloader for Twitter :bird:
