@@ -1,7 +1,8 @@
 <h1 align="center">
-	<img src="https://raw.githubusercontent.com/CodeDotJS/twiger/master/media/1.png" width="500">
+	<img src="https://raw.githubusercontent.com/rishigiridotcom/rishigiri.com/22b4d2aa527af316a05f0126cdb1f52eec8edb28/github/twiggger.png" width="250">
 	<br>
 	<img src="https://travis-ci.org/CodeDotJS/twiger.svg?branch=master">
+	<img src="https://camo.githubusercontent.com/b9d624cb37169bb3e06fd6deddabfff02b5e43be/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64655f7374796c652d584f2d3565643963372e737667">
 </h1>
 
 > :bird: A complete media downloader for Twitter
@@ -11,7 +12,7 @@
 ```
 $ npm install --global twiger
 ```
- __OR__
+ __`OR`__
 ```
 $ sudo npm install --global twiger
 ```
@@ -19,60 +20,31 @@ $ sudo npm install --global twiger
 ## Usage
 
 ```
-Usage : twiger <command> [info] <option> [info]
+  Complete Twitter media downloader!
 
-Commands:
-  u  ❱ twitter username - profile picture
-  c  ❱ twitter username - cover picture
-  g  ❱ full link        - download gifs
+  Usage   : twiger <command> [username/link]
 
-Options:
-  -n  save images as                                     [required]
+  Command :
+  -p, --profile       Download profile picture of a twitter user.
+  -c, --cover         Download cover picture of a twitter user.
+  -g, --gif           Download gifs.
 
-Missing required argument: n
+  Help    :
+  $ twiger -p iamdevloper
+  $ twiger -g <url>
+
+  Images are saved in Twgier under your home directory!
 ```
 
-## Examples
-
-> Download profile picture of a twitter user.
-
-```
- $ twiger -u tjholowaychuk -n tj-profile
-```
-
-> Download cover picture of a twitter user.
-
-```
- $ twiger -c tjholowaychuk -n tj-cover
-```
-
-> Download a gif or video.
-
-```
- $ twiger -g https://twitter.com/Rishi_Giri_/status/734001198752108544 -n wowgifs
-```
-
-## Note
-
-> Don't give any extension while writing file's name
-
-__Example :__
-
-```
- $ twiger -u Rishi_Giri_ -n rishi     ( ✔ )
-
- $ twiger -u Rishi_Giri_ -n rishi.jpg ( ✖ ) 
-```
-
-> Available gifs on twitter are changed into mp4 format.
+__`NOTE :`__ `Available gifs on twitter are changed into mp4 format.`
 
 ## Related
 
-- [image-of](https://github.com/CodeDotJS/image-of) : Download profile picture of any facebook user.
+- __[`image-of`](https://github.com/CodeDotJS/image-of)__ : `Download profile picture of any facebook user.`
 
-- [instavim](https://github.com/CodeDotJS/instavim) : A complete Instagram media downloader.
+- __[`instavim`](https://github.com/CodeDotJS/instavim)__ : `A complete Instagram media downloader.`
 
-- [gravator-of](https://github.com/CodeDotJS/gravator-of) : Download profile picture of any gravatar user.
+- __[`gravator-of`](https://github.com/CodeDotJS/gravator-of)__ : `Download profile picture of any gravatar user.`
 
 ## License
 
