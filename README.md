@@ -17,6 +17,12 @@ $ npm install --global twiger
 $ sudo npm install --global twiger
 ```
 
+## Preview
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/rishigiridotcom/rishigiri.com/122573c6f5ab91c598c175e2a808420e7373bf95/github/twiger.gif">
+</p>
+
 ## Usage
 
 ```
