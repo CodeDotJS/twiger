@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codedotjs/speed-test.git"
+    "url": "git+https://github.com/codedotjs/twiger.git"
   },
   "author": "Rishi Giri <rushforlinux@gmail.com> (rishigiri.com)",
   "bin": {
@@ -36,12 +36,13 @@
     "twitter"
   ],
   "dependencies": {
-    "mkdirp": "*",
-    "colors": "*",
-    "yargs": "*",
-    "update-notifier": "*",
-    "got": "*",
-    "cheerio": "*"
+    "chalk": "^1.1.3",
+    "fs-extra": "^2.0.0",
+    "got": "^6.7.1",
+    "is-url": "^1.2.2",
+    "log-update": "^1.0.2",
+    "ora": "^1.1.0",
+    "update-notifier": "^2.1.0"
   },
   "devDependencies": {
     "ava": "*",
@@ -49,8 +50,8 @@
     "xo": "*"
   },
   "bugs": {
-    "url": "https://github.com/codedotjs/speed-test/issues"
+    "url": "https://github.com/codedotjs/twiger/issues"
   },
-  "homepage": "https://github.com/codedotjs/speed-test#readme",
+  "homepage": "https://github.com/codedotjs/twiger#readme",
   "main": "cli.js"
 }
