@@ -2,205 +2,158 @@
 
 'use strict';
 
-/* dependencies */
-const dns = require('dns');
+const os = require('os');
 const fs = require('fs');
+const dns = require('dns');
 const https = require('https');
-const mkdirp = require('mkdirp');
+const fse = require('fs-extra');
 const got = require('got');
-const cheerio = require('cheerio');
-const colors = require('colors/safe');
-
-// for templating
-const arrow = colors.cyan.bold('❱');
-
-const argv = require('yargs')
-	.usage(colors.cyan.bold('\nUsage : $0 <command> [info] <option> [info]'))
-	.command('u', ` ${arrow} twitter username - profile picture                 `)
-	.command('c', ` ${arrow} twitter username - cover picture                   `)
-	.command('g', ` ${arrow} full link        - download gifs                   `)
-	.demand(['n'])
-	.describe('n', `${arrow}  save images as`)
-	.example(colors.yellow.bold('\n$0 -u spacex -n rocks'))
-	.argv;
-
+const isURL = require('is-url');
+const chalk = require('chalk');
+const logUpdate = require('log-update');
+const ora = require('ora');
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
+
 updateNotifier({pkg}).notify();
 
-const savedMedia = 'Twitter/';
+const arg = process.argv[2];
+const inf = process.argv[3];
 
-// check connection
-dns.lookup('twitter.com', err => {
-	if (err && err.code === 'ENOTFOUND') {
-		console.log(colors.red.bold('\n ❱ Internet Connection    :    ✖\n'));
-		process.exit(1);
-	}
-	// initially create directory
-	mkdirp(savedMedia, err => {
+const pre = chalk.cyan.bold('›');
+const pos = chalk.red.bold('›');
+
+const args = ['-p', '--profile', '-c', '--cover', '-g', '--gif'];
+
+if (!arg || arg === '-h' || arg === '--help' || args.indexOf(arg) === -1) {
+	console.log(`
+  Complete Twitter media downloader!
+
+  ${chalk.cyan('Usage   :')} twiger <command> [username/link]
+
+  ${chalk.cyan('Command :')}
+  -p, --profile       Download profile picture of a twitter user.
+  -c, --cover         Download cover picture of a twitter user.
+  -g, --gif           Download gifs.
+
+  ${chalk.cyan('Help    :')}
+  $ twiger -p iamdevloper
+  $ twiger -g <url>
+
+  ${chalk.dim('Images are saved in Twgier under your home directory!')}
+  `);
+	process.exit(1);
+}
+
+const spinner = ora();
+
+const url = `https://twitter.com/${inf}`;
+
+const checkConnection = () => {
+	dns.lookup('twitter.com', err => {
 		if (err) {
+			logUpdate(`\n${pos} ${chalk.dim('Please check your internet connection!')}\n`);
 			process.exit(1);
-			console.log(err);
 		} else {
-			// single mkdirp was creating problem for some reason
+			logUpdate();
+			spinner.text = 'Twiggering';
+			spinner.start();
 		}
 	});
+};
+
+const folder = `${os.homedir()}/Twiger/`;
+
+fse.ensureDir(folder, err => {
+	if (err) {
+		process.exit(1);
+	}
 });
 
-// gif's preview images is stored in css
-// therefore, regex to extract the image link
-function matchRegEx(backURL) {
-	const regPar = /(?:\(['"]?)(.*?)(?:['"]?\))/;
-	return regPar.exec(backURL)[1];
-}
+const checkMessage = () => {
+	logUpdate();
+	spinner.text = 'Please wait';
+	spinner.start();
+};
 
-// previews are images (initially)
-// chaning them to working gifs
-function convertImageToVideo(imageURL) {
-	return imageURL.replace('tweet_video_thumb', 'tweet_video').replace('.jpg', '.mp4');
-}
+const downloadMessage = () => {
+	logUpdate();
+	spinner.text = 'Downloading Media!';
+};
 
-// dirty way to check if user entered a url realted to twitter
-function checkURL(isURL) {
-	if (isURL.indexOf('https://twitter.com') === -1) {
-		return false;
-	}
-	return true;
-}
+const errMessage = () => {
+	spinner.stop();
+	logUpdate(`\n${pos} ${chalk.dim('Invalid username/link')}\n`);
+};
 
-// finding extension of images
-function parseExtension(imageLink) {
-	return imageLink.split('.').pop();
-}
+const showOnce = () => {
+	checkMessage();
+	checkConnection();
+};
 
-const profileArg = argv.u;
-const coverArg = argv.c;
-
-// passed argument
-const profileMedia = `https://twitter.com/${profileArg}`;
-const coverMedia = `https://twitter.com/${coverArg}`;
-
-const gifMedia = argv.g;
-
-// messages used all over the tool
-const messageDisplay = colors.green.bold(savedMedia.replace('./', '').replace('/', ''));
-const argName = colors.green.bold(argv.n);
-const saveMessage = colors.cyan.bold(` Image Saved In      :   ${messageDisplay} ❱ ${argName}.`);
-const gifMessage = colors.cyan.bold(` GIF Saved In      :   ${messageDisplay} ❱ ${argName}.  `);
-
-// for downloading profile picture of a twitter user
-if (argv.u) {
-	got(profileMedia).then(res => {
-		const $ = cheerio.load(res.body);
-		const getProfileLink = $('.ProfileAvatar-image').attr('src');
-		// function used to extract image's extension
-		const getExt = parseExtension(getProfileLink);
-		const mediaName = argv.n;
-		// making extension valid
-		const addExtension = `${mediaName}.${getExt}`;
-		// using mkdirp once was creating problem, so this solved the problem
-		mkdirp(savedMedia, err => {
-			if (err) {
+const download = (media, file) => {
+	file = file || '';
+	const fileName = Math.random().toString(15).substr(4, 5);
+	const save = fs.createWriteStream(`${folder}${fileName}.${file}`);
+	https.get(media, (res, cb) => {
+		spinner.start();
+		res.pipe(save);
+		save.on('finish', () => {
+			logUpdate(`\n${pre} Media Saved!\n`);
+			save.close(cb);
+			spinner.stop();
+			save.on('error', () => {
 				process.exit(1);
-				// exiting before showing errors
-				console.log(err);
-			} else {
-				console.log(colors.cyan.bold('\n ❱ Directory Created   :   ✔\n'));
-			}
-		});
-		// saving images
-		const file = fs.createWriteStream(savedMedia + addExtension);
-		// downloading files
-		https.get(getProfileLink, (res, cb) => {
-			res.pipe(file);
-			// download complete
-			file.on('finish', () => {
-				file.close(cb);
-				console.log(colors.green.bold(` ${arrow}${saveMessage}${getExt}`, '\n'));
 			});
-		}); // handling errors and exiting if any
-	}).catch(error => {
-		console.log(colors.red.bold('\n ❱ Twitter User    :    ✖\n'));
-		process.exit(1);
-		console.log(error);
+		});
+	});
+	return;
+};
+
+if (arg === '-p' || arg === '--profile') {
+	showOnce();
+	got(url).then(res => {
+		downloadMessage();
+		const body = res.body;
+		const link = body.split('data-resolved-url-large="')[1].split('"')[0].trim();
+		const ext = link.split('.').pop();
+		download(link, ext);
+	}).catch(err => {
+		if (err) {
+			errMessage();
+		}
 	});
 }
 
-// for downloading cover images
-if (argv.c) {
-	got(coverMedia).then(res => {
-		const $ = cheerio.load(res.body);
-		// finding cover's url
-		const getCoverLink = $('.ProfileCanopy-headerBg img').attr('src');
-		// passed filename's argument
-		const coverName = argv.n;
-		// for backup, saves from unexpected errors
-		mkdirp(savedMedia, err => {
-			if (err) {
-				process.exit(1);
-				console.log(err);
-			} else {
-				console.log(colors.cyan.bold('\n ❱ Directory Created   :   ✔\n'));
-			}
-		});
-		// downloading and saving cover
-		const file = fs.createWriteStream(savedMedia + `${coverName}.jpg`);
-		https.get(getCoverLink, (res, cb) => {
-			res.pipe(file);
-			file.on('finish', () => {
-				file.close(cb);
-				console.log(colors.green.bold(` ${arrow}${saveMessage}jpg`, '\n'));
-			});
-		});
-	}).catch(error => {
-		console.log(colors.red.bold('\n ❱ Twitter User    :    ✖\n'));
-		process.exit(1);
-		console.log(error);
+if (arg === '-c' || arg === '--cover') {
+	showOnce();
+	got(url).then(res => {
+		downloadMessage();
+		const body = res.body;
+		const link = body.split('1500x500')[0].split('src="')[2];
+		download(`${link}1500x500`, '.jpg');
+	}).catch(err => {
+		if (err) {
+			errMessage();
+		}
 	});
 }
 
-// for downloading gifs from twitter
-if (argv.g) {
-	// checking if url is valid
-	if (checkURL(gifMedia) === false) {
-		console.log(colors.red.bold('\n ❱ Link is valid    :    ✖\n'));
-		// stop the process if url is not valid
+if (arg === '-g' || arg === '--gif') {
+	if (isURL(inf) === false) {
+		logUpdate(`\n${pos} ${chalk.dim('Please provide a valid url')}\n`);
 		process.exit(1);
 	}
-	got(gifMedia).then(res => {
-		const $ = cheerio.load(res.body);
-		// gif's links are cotained in css
-		// attr('style') makes it easy to find
-		// matchRegEx extracts the required url by removing background('')
-		const getMediaLink = matchRegEx(($('.PlayableMedia-player').attr('style')));
-		// previews are images
-		// changing image's url to downloadable mp4 version
-		const gifLink = convertImageToVideo(getMediaLink);
-		// ofcourse it's .gif, but downloader is little foolish
-		const gifExtension = parseExtension(gifLink);
-		const gifName = argv.n;
-		const finalExt = `${gifName}.${gifExtension}`;
-		// backup mkdirp :)
-		mkdirp(savedMedia, err => {
-			if (err) {
-				process.exit(1);
-				console.log(err);
-			} else {
-				console.log(colors.cyan.bold('\n ❱ Directory Created   :   ✔\n'));
-			}
-		});
-		// downloading and saving gifs to the default folder
-		const file = fs.createWriteStream(savedMedia + finalExt);
-		https.get(gifLink, (res, cb) => {
-			res.pipe(file);
-			file.on('finish', () => {
-				file.close(cb);
-				console.log(colors.green.bold(` ${arrow}${gifMessage}mp4`, '\n'));
-			});
-		});
-	}).catch(error => {
-		console.log(colors.red.bold('\n Link related to GIF   :   ✖\n'));
-		process.exit(1);
-		console.log(error);
+	showOnce();
+	got(inf).then(res => {
+		downloadMessage();
+		const gif = res.body;
+		const id = gif.split('tweet_video_thumb/')[1].split(`.jpg`)[0];
+		const url = `https://video.twimg.com/tweet_video/${id}.mp4`;
+		download(url, 'mp4');
+	}).catch(err => {
+		if (err) {
+			errMessage();
+		}
 	});
 }
